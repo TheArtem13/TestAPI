@@ -3,7 +3,6 @@ package com.miro.widgets;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -41,27 +40,16 @@ public class WidgetService {
 		Pageable paging = PageRequest.of(pageVal, sizeVal, Sort.by("zIndex").ascending());
 		Page<Widget> pagedResult = repository.findAll(paging);
 		return pagedResult;
-		
-//		Collections.sort(widgetContainer.widgetsList, new Comparator<Widget>() {
-//		      @Override
-//		      public int compare(final Widget object1, final Widget object2) {
-//		          return object1.getzIndex().compareTo(object2.getzIndex());
-//		      }
-//		  });
-//		return widgetContainer.widgetsList;
 	}
 	
 	public Optional<Widget> GetWidgetById(Long id) {
-//		Long longId = new Long(id);
 		Optional<Widget> result = repository.findById(id);
 		return result;
 	}
 	
 	public Widget CreateNewWidget(Integer xValue, Integer yValue, double weight, double height, @Nullable Integer zIndex) {
 		List<Widget> currentList = (List<Widget>) repository.findAll();
-//		Integer newItemId = GetNewIdetifier(currentList);
 		Widget newWidget = new Widget();
-//		newWidget.setId(newItemId);
 		newWidget.setxValue(xValue);
 		newWidget.setyValue(yValue);
 		newWidget.setWeight(weight);
@@ -76,7 +64,6 @@ public class WidgetService {
 			newWidget.setzIndex(GetMaxZindex(currentList));
 		}
 		
-//		widgetContainer.saveNewWidget(newWidget);
 		repository.save(newWidget);
 		return newWidget;
 	}

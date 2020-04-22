@@ -2,6 +2,9 @@
 <p><small>GET</small> http://localhost:8080</p>
 <p>src\main\java\com.miro.widget.controllers <strong>WidgetController\getAllWidgets()</strong></p>
 
+<h4 style="color:gray;">Size and # of page (optional)</h4>
+<p><p><small>GET</small> http://localhost:8080?page=0&size=20</p></p>
+
 <h2>Get widget by id</h2>
 <p><small>GET</small> http://localhost:8080/widget?id=1</p>
 <p>src\main\java\com.miro.widget.controllers <strong>WidgetController\GetWidgetById()</strong></p>

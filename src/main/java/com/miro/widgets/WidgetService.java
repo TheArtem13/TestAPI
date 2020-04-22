@@ -8,45 +8,60 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.lang.Nullable;
-//import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+
+import com.miro.widgets.data.Widget;
+import com.miro.widgets.repository.WidgetRepository;
 
 
 @Component
-//@Scope("application")
 public class WidgetService {
-	List<Widget> widgetsList = new LinkedList<Widget>();
 	
-	public void saveNewWidget(Widget widget) {
-		widgetsList.add(widget);
+	@Autowired
+    WidgetRepository repository;
+	
+//	@Autowired
+//	WidgetContainer widgetContainer;
+	
+	public Page<Widget> GetSortedList(@Nullable Integer page, @Nullable Integer size){
+		Integer sizeVal = 10;
+		Integer pageVal = 0;
+		if(size != null) {
+			sizeVal = size;
+		}
+		if(page != null) {
+			pageVal = page;
+		}
+		Pageable paging = PageRequest.of(pageVal, sizeVal, Sort.by("zIndex").ascending());
+		Page<Widget> pagedResult = repository.findAll(paging);
+		return pagedResult;
+		
+//		Collections.sort(widgetContainer.widgetsList, new Comparator<Widget>() {
+//		      @Override
+//		      public int compare(final Widget object1, final Widget object2) {
+//		          return object1.getzIndex().compareTo(object2.getzIndex());
+//		      }
+//		  });
+//		return widgetContainer.widgetsList;
 	}
 	
-	public List<Widget> getWidgets(){
-		return widgetsList;
-	}
-	
-	public List<Widget> GetSortedList(){
-		Collections.sort(widgetsList, new Comparator<Widget>() {
-		      @Override
-		      public int compare(final Widget object1, final Widget object2) {
-		          return object1.getzIndex().compareTo(object2.getzIndex());
-		      }
-		  });
-		return widgetsList;
-	}
-	
-	public Optional<Widget> GetWidgetById(Integer id) {
-		Optional<Widget> result = widgetsList.stream()
-		.filter(x -> x.getId() == id).findFirst();
+	public Optional<Widget> GetWidgetById(Long id) {
+//		Long longId = new Long(id);
+		Optional<Widget> result = repository.findById(id);
 		return result;
 	}
 	
-	public Widget CreateNewWidget(Integer xValue, Integer yValue, double weight, double height, @Nullable Integer zIndex) { //Set new widget in memory
-		List<Widget> currentList = getWidgets(); //Get list of exist widgets for fing new id(increment)
-		Integer newItemId = GetNewIdetifier(currentList);
+	public Widget CreateNewWidget(Integer xValue, Integer yValue, double weight, double height, @Nullable Integer zIndex) {
+		List<Widget> currentList = (List<Widget>) repository.findAll();
+//		Integer newItemId = GetNewIdetifier(currentList);
 		Widget newWidget = new Widget();
-		newWidget.setId(newItemId);
+//		newWidget.setId(newItemId);
 		newWidget.setxValue(xValue);
 		newWidget.setyValue(yValue);
 		newWidget.setWeight(weight);
@@ -61,12 +76,13 @@ public class WidgetService {
 			newWidget.setzIndex(GetMaxZindex(currentList));
 		}
 		
-		saveNewWidget(newWidget);
+//		widgetContainer.saveNewWidget(newWidget);
+		repository.save(newWidget);
 		return newWidget;
 	}
 	
-	public Optional<Widget> EditWidget(Integer id, @Nullable Integer xValue, @Nullable Integer yValue, @Nullable Double weight, @Nullable Double height, @Nullable Integer zIndex) {
-		Optional<Widget> widget = GetWidgetById(id);
+	public Optional<Widget> EditWidget( @Nullable Long id, @Nullable Integer xValue, @Nullable Integer yValue, @Nullable Double weight, @Nullable Double height, @Nullable Integer zIndex) {
+		Optional<Widget> widget = repository.findById(id);
 		if(widget != null) {
 			widget.get().setLastModification(new Date()); //update last modification
 			widget.get().setxValue((xValue != null) ? xValue : widget.get().getxValue()); //if this value not null, update this
@@ -75,28 +91,30 @@ public class WidgetService {
 			widget.get().setHeight((height != null) ? height : widget.get().getHeight());
 //			widget.get().setzIndex((zIndex != null) ? zIndex : widget.get().getzIndex());
 			if(zIndex != null) {
-				this.UpdateZIndexes(zIndex, getWidgets()); //update z-index in other widgets
+				this.UpdateZIndexes(zIndex, (List<Widget>) repository.findAll()); //update z-index in other widgets
 				widget.get().setzIndex(zIndex);
 			}
 		}
 		return widget;
 	}
 	
-	public void DeleteWidget(Integer id) {
-		Optional<Widget> widget = GetWidgetById(id);
+	public void DeleteWidget(Long id) {
+		Optional<Widget> widget = repository.findById(id);
 		if(widget != null) {
-			widgetsList.remove(widget.get());
+			long thisId = widget.get().getId();
+			repository.deleteById(thisId);
+//			widgetContainer.widgetsList.remove(widget.get());
 		}
 	}
 	
-	private Integer GetNewIdetifier(List<Widget> currentList) { //Find id for new widget
-		Integer newItemId = 1;
-		if(currentList.size() > 0) {
-			Widget maxIdWidget = Collections.max(currentList, Comparator.comparing(s -> s.getId()));
-			newItemId = maxIdWidget.getId() + 1;
-		}
-		return newItemId;
-	}
+//	private Integer GetNewIdetifier(List<Widget> currentList) { //Find id for new widget
+//		Integer newItemId = 1;
+//		if(currentList.size() > 0) {
+//			Widget maxIdWidget = Collections.max(currentList, Comparator.comparing(s -> s.getId()));
+//			newItemId = maxIdWidget.getId() + 1;
+//		}
+//		return newItemId;
+//	}
 	
 	private Integer GetMaxZindex(List<Widget> currentList) { //Find max z-index in exist widgets
 		Integer result = 1;
@@ -112,13 +130,14 @@ public class WidgetService {
 		widget.setzIndex(zIndex + 1);
 	}
 	
-	private void UpdateZIndexes(Integer zIndex, List<Widget> currentList) {
+	private void UpdateZIndexes(Integer zIndex, List<Widget> currentList) { //Update z-indexes after insert new
 		List<Widget> upperWidgets = currentList.stream()
 				.filter(p -> p.getzIndex() >= zIndex).collect(Collectors.toList());
 		for (Widget widget : upperWidgets) {
 			IncrementZIndex(widget);
 		}
 	}
+
 	
-	
+
 }

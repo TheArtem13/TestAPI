@@ -10,19 +10,20 @@
 <p>src\main\java\com.miro.widget.controllers <strong>WidgetController\GetWidgetById()</strong></p>
 
 <h2>Set new widget</h2>
-<p><small>POST</small> http://localhost:8080?xValue=1&yValue=1&weight=10.0&height=20.5&zIndex=1</p>
+<p><small>POST</small> http://localhost:8080?xValue=1&yValue=1&width=10.0&height=20.5&zIndex=1</p>
 <p>or</p>
-<p><small>POST</small> http://localhost:8080?xValue=1&yValue=1&weight=10&height=20</p>
+<p><small>POST</small> http://localhost:8080?xValue=1&yValue=1&width=10&height=20</p>
 <p>src\main\java\com.miro.widget.controllers <strong>WidgetController\setNewWidget()</strong></p>
 
 <h2>Edit widget</h2>
-<p><small>POST</small> http://localhost:8080/edit?id=1&xValue=2&yValue=3&weight=10.0&height=20.5&zIndex=3</p>
+<p><small>POST</small> http://localhost:8080/edit?id=1&xValue=2&yValue=3&width=10.0&height=20.5&zIndex=3</p>
 <p>or</p>
 <p><small>POST</small> http://localhost:8080/edit?id=1&xValue=5</p>
 <p>or</p>
-<p><small>POST</small> http://localhost:8080/edit?id=1&weight=50.0</p>
+<p><small>POST</small> http://localhost:8080/edit?id=1&width=50.0</p>
 <p>src\main\java\com.miro.widget.controllers <strong>WidgetController\editWidget()</strong></p>
 
 <h2>Delete widget</h2>
 <p><small>DELETE</small> http://localhost:8080?id=1</p>
 <p>src\main\java\com.miro.widget.controllers <strong>WidgetController\DeleteWidget()</strong></p>
+

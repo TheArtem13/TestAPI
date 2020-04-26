@@ -1,21 +1,29 @@
-package com.miro.widgets;
+package com.miro.widgets.data;
 
 import java.util.Date;
 
-public class Widget {
-	  private Integer id;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 
-	  private Double weight;
+@Entity
+public class Widget {
+	@Id
+	@GeneratedValue(strategy=GenerationType.AUTO)
+	  private Long id;
+
+	  private Double width;
 	  private Double height;
 	  private Date lastModification;
 	  private Integer xValue;
 	  private Integer yValue;
 	  private Integer zIndex;
-	public Double getWeight() {
-		return weight;
+	public Double getWidth() {
+		return width;
 	}
-	public void setWeight(Double weight) {
-		this.weight = weight;
+	public void setWidth(Double width) {
+		this.width = width;
 	}
 	public Double getHeight() {
 		return height;
@@ -47,10 +55,10 @@ public class Widget {
 	public void setzIndex(Integer zIndex) {
 		this.zIndex = zIndex;
 	}
-	public Integer getId() {
+	public Long getId() {
 		return id;
 	}
-	public void setId(Integer id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 }

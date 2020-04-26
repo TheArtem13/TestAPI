@@ -16,17 +16,15 @@ import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
 import com.miro.widgets.data.Widget;
+import com.miro.widgets.repository.PagingRepository;
 import com.miro.widgets.repository.WidgetRepository;
 
 
 @Component
-public class WidgetService {
+public class WidgetService implements WidgetRepository {
 	
 	@Autowired
-    WidgetRepository repository;
-	
-//	@Autowired
-//	WidgetContainer widgetContainer;
+    PagingRepository repository;
 	
 	public Page<Widget> GetSortedList(@Nullable Integer page, @Nullable Integer size){
 		Integer sizeVal = 10;
@@ -52,7 +50,7 @@ public class WidgetService {
 		Widget newWidget = new Widget();
 		newWidget.setxValue(xValue);
 		newWidget.setyValue(yValue);
-		newWidget.setWeight(weight);
+		newWidget.setWidth(weight);
 		newWidget.setHeight(height);
 		newWidget.setLastModification(new Date());
 		if(zIndex != null) {
@@ -61,49 +59,46 @@ public class WidgetService {
 			this.UpdateZIndexes(zIndex, currentList);
 		}else {
 			//find max z-index and set +1
-			newWidget.setzIndex(GetMaxZindex(currentList));
+			newWidget.setzIndex(GetMaxIncrementedZindex(currentList));
 		}
-		
 		repository.save(newWidget);
 		return newWidget;
 	}
 	
 	public Optional<Widget> EditWidget( @Nullable Long id, @Nullable Integer xValue, @Nullable Integer yValue, @Nullable Double weight, @Nullable Double height, @Nullable Integer zIndex) {
 		Optional<Widget> widget = repository.findById(id);
-		if(widget != null) {
+		if(!widget.isEmpty()) {
 			widget.get().setLastModification(new Date()); //update last modification
 			widget.get().setxValue((xValue != null) ? xValue : widget.get().getxValue()); //if this value not null, update this
 			widget.get().setyValue((yValue != null) ? yValue : widget.get().getyValue());
-			widget.get().setWeight((weight != null) ? weight : widget.get().getWeight());
+			widget.get().setWidth((weight != null) ? weight : widget.get().getWidth());
 			widget.get().setHeight((height != null) ? height : widget.get().getHeight());
 //			widget.get().setzIndex((zIndex != null) ? zIndex : widget.get().getzIndex());
 			if(zIndex != null) {
 				this.UpdateZIndexes(zIndex, (List<Widget>) repository.findAll()); //update z-index in other widgets
 				widget.get().setzIndex(zIndex);
 			}
+			return widget;
 		}
-		return widget;
+		else {
+			return Optional.ofNullable(new Widget());
+		}
+		
 	}
 	
-	public void DeleteWidget(Long id) {
+	public boolean DeleteWidget(Long id) {
 		Optional<Widget> widget = repository.findById(id);
-		if(widget != null) {
+		if(!widget.isEmpty()) {
 			long thisId = widget.get().getId();
 			repository.deleteById(thisId);
-//			widgetContainer.widgetsList.remove(widget.get());
+			return true;
+		}
+		else {
+			return false;
 		}
 	}
 	
-//	private Integer GetNewIdetifier(List<Widget> currentList) { //Find id for new widget
-//		Integer newItemId = 1;
-//		if(currentList.size() > 0) {
-//			Widget maxIdWidget = Collections.max(currentList, Comparator.comparing(s -> s.getId()));
-//			newItemId = maxIdWidget.getId() + 1;
-//		}
-//		return newItemId;
-//	}
-	
-	private Integer GetMaxZindex(List<Widget> currentList) { //Find max z-index in exist widgets
+	public Integer GetMaxIncrementedZindex(List<Widget> currentList) { //Find max z-index in exist widgets and ++
 		Integer result = 1;
 		if(currentList.size() > 0) {
 			Widget maxZindexWidget = Collections.max(currentList, Comparator.comparing(s -> s.getzIndex()));
@@ -112,12 +107,12 @@ public class WidgetService {
 		return result;
 	}
 	
-	private void IncrementZIndex(Widget widget) { //++ current z-index
+	public void IncrementZIndex(Widget widget) { //++ current z-index
 		Integer zIndex = widget.getzIndex();
 		widget.setzIndex(zIndex + 1);
 	}
 	
-	private void UpdateZIndexes(Integer zIndex, List<Widget> currentList) { //Update z-indexes after insert new
+	public void UpdateZIndexes(Integer zIndex, List<Widget> currentList) { //Update z-indexes after insert new
 		List<Widget> upperWidgets = currentList.stream()
 				.filter(p -> p.getzIndex() >= zIndex).collect(Collectors.toList());
 		for (Widget widget : upperWidgets) {
@@ -125,6 +120,5 @@ public class WidgetService {
 		}
 	}
 
-	
 
 }

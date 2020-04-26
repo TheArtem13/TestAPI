@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 //import com.google.common.util.concurrent.RateLimiter;
 import com.miro.widgets.WidgetService;
@@ -20,15 +21,32 @@ public class WidgetController {
 	@Autowired
 	private WidgetService widgetService;
 	
-//	@Autowired
-//    WidgetRepository repository;
+//	private final Bucket bucket;
 	
-	@GetMapping(path="/")
-	public @ResponseBody Iterable<Widget>  getAllWidgets(Integer page, Integer size) {
+	
+//	public WidgetController() {
+//	    Bandwidth limit = Bandwidth.simple(1000, Duration.ofMinutes(1));
+//	    this.bucket = Bucket4j.builder().addLimit(limit).build();
+//	  }
+	
+	@GetMapping(path="/list")
+	public Iterable<Widget>  getAllWidgets(Integer page, Integer size) {
 		Page<Widget> result = widgetService.GetSortedList(page, size);
 		return result;
 		
 	  }
+	
+//	@GetMapping("/")
+//	  public ResponseEntity<Iterable<Widget>> getAllWidgets() {
+//		ConsumptionProbe probe = this.bucket.tryConsumeAndReturnRemaining(1);
+//		if (this.bucket.tryConsume(1)) {
+//			Page<Widget> result = widgetService.GetSortedList(0, 10);
+//		      return ResponseEntity.ok()
+//		    		  .header("X-Rate-Limit-Remaining", Long.toString(probe.getRemainingTokens()))
+//		    		  .body(result);
+//		}
+//		return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).build();
+//	  }
 	
 	@GetMapping(path="/widget")
 	public @ResponseBody Optional<Widget> GetWidgetById(Long id){
@@ -36,7 +54,7 @@ public class WidgetController {
 		return widget;
 	}
 	
-	@PostMapping(path="/")
+	@PostMapping(path="/new")
 	public @ResponseBody Widget setNewWidget(Integer xValue, Integer yValue, Double weight, Double height, Integer zIndex) {
 		Widget newWidget = widgetService.CreateNewWidget(xValue, yValue, weight, height, zIndex);
 		return newWidget;

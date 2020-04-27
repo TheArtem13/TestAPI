@@ -12,23 +12,20 @@ import java.time.Duration;
 import io.github.bucket4j.Bandwidth;
 import io.github.bucket4j.Bucket;
 import io.github.bucket4j.Bucket4j;
-import io.github.bucket4j.Refill;
 
 @SpringBootApplication
 public class WidgetApplication implements WebMvcConfigurer {
 	
 	@Override
 	  public void addInterceptors(InterceptorRegistry registry) {
-	    Refill refill = Refill.greedy(1000, Duration.ofMinutes(1));
-	    Bandwidth limit = Bandwidth.classic(10, refill).withInitialTokens(1);
+	    Bandwidth limit = Bandwidth.simple(1000, Duration.ofMinutes(1));
 	    Bucket bucket = Bucket4j.builder().addLimit(limit).build();
-	    registry.addInterceptor(new RateLimitInterceptor(bucket, 1)).addPathPatterns("/*");
+	    registry.addInterceptor(new RateLimitInterceptor(bucket, 3)).addPathPatterns("/widget*");
 
-	    refill = Refill.intervally(200, Duration.ofMinutes(1));
-	    limit = Bandwidth.classic(10, refill);
+	    limit = Bandwidth.simple(200, Duration.ofMinutes(1));
 	    bucket = Bucket4j.builder().addLimit(limit).build();
-	    registry.addInterceptor(new RateLimitInterceptor(bucket, 1))
-	        .addPathPatterns("/list/"); 
+	    registry.addInterceptor(new RateLimitInterceptor(bucket, 3))
+	        .addPathPatterns("/list"); 
 	}
 	
     public static void main(String[] args) {

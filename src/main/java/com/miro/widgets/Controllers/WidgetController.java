@@ -32,19 +32,19 @@ public class WidgetController {
 		return widget;
 	}
 	
-	@PostMapping(path="/new")
+	@PostMapping(path="/widget")
 	public @ResponseBody Widget setNewWidget(Integer xValue, Integer yValue, Double width, Double height, Integer zIndex) {
 		Widget newWidget = widgetService.CreateNewWidget(xValue, yValue, width, height, zIndex);
 		return newWidget;
 	}
 	
-	@PostMapping(path="/edit")
+	@PostMapping(path="/widget/edit")
 	public @ResponseBody Optional<Widget> editWidget(long id, Integer xValue, Integer yValue, Double width, Double height, Integer zIndex) {
 		Optional<Widget> widget = widgetService.EditWidget(id, xValue, yValue, width, height, zIndex);
 		return widget;
 	}
 	
-	@DeleteMapping(path="/")
+	@DeleteMapping(path="/widget")
 	public @ResponseBody Iterable<Widget> getDeleteWidget(long id){
 		widgetService.DeleteWidget(id);
 		Iterable<Widget> result = widgetService.GetSortedList(0, 10);

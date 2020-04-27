@@ -21,7 +21,6 @@ import com.miro.widgets.data.Widget;
 import com.miro.widgets.repository.PagingRepository;
 
 @RunWith(SpringRunner.class)
-//@TestPropertySource(locations = "classpath:/application-test.properties")
 public class WidgetServiceTest {
 	
 	Integer page = 0;

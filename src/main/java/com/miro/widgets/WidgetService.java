@@ -67,7 +67,7 @@ public class WidgetService implements WidgetRepository {
 	
 	public Optional<Widget> EditWidget( @Nullable Long id, @Nullable Integer xValue, @Nullable Integer yValue, @Nullable Double weight, @Nullable Double height, @Nullable Integer zIndex) {
 		Optional<Widget> widget = repository.findById(id);
-		if(!widget.isEmpty()) {
+		if(widget.orElse(null) != null) {
 			widget.get().setLastModification(new Date()); //update last modification
 			widget.get().setxValue((xValue != null) ? xValue : widget.get().getxValue()); //if this value not null, update this
 			widget.get().setyValue((yValue != null) ? yValue : widget.get().getyValue());
@@ -88,7 +88,7 @@ public class WidgetService implements WidgetRepository {
 	
 	public boolean DeleteWidget(Long id) {
 		Optional<Widget> widget = repository.findById(id);
-		if(!widget.isEmpty()) {
+		if(widget.orElse(null) != null) {
 			long thisId = widget.get().getId();
 			repository.deleteById(thisId);
 			return true;

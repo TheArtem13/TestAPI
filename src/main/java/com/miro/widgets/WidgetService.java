@@ -45,12 +45,12 @@ public class WidgetService implements WidgetRepository {
 		return result;
 	}
 	
-	public Widget CreateNewWidget(Integer xValue, Integer yValue, double weight, double height, @Nullable Integer zIndex) {
+	public Widget CreateNewWidget(Integer xValue, Integer yValue, double width, double height, @Nullable Integer zIndex) {
 		List<Widget> currentList = (List<Widget>) repository.findAll();
 		Widget newWidget = new Widget();
 		newWidget.setxValue(xValue);
 		newWidget.setyValue(yValue);
-		newWidget.setWidth(weight);
+		newWidget.setWidth(width);
 		newWidget.setHeight(height);
 		newWidget.setLastModification(new Date());
 		if(zIndex != null) {
@@ -65,13 +65,13 @@ public class WidgetService implements WidgetRepository {
 		return newWidget;
 	}
 	
-	public Optional<Widget> EditWidget( @Nullable Long id, @Nullable Integer xValue, @Nullable Integer yValue, @Nullable Double weight, @Nullable Double height, @Nullable Integer zIndex) {
+	public Optional<Widget> EditWidget( @Nullable Long id, @Nullable Integer xValue, @Nullable Integer yValue, @Nullable Double width, @Nullable Double height, @Nullable Integer zIndex) {
 		Optional<Widget> widget = repository.findById(id);
 		if(widget.orElse(null) != null) {
 			widget.get().setLastModification(new Date()); //update last modification
 			widget.get().setxValue((xValue != null) ? xValue : widget.get().getxValue()); //if this value not null, update this
 			widget.get().setyValue((yValue != null) ? yValue : widget.get().getyValue());
-			widget.get().setWidth((weight != null) ? weight : widget.get().getWidth());
+			widget.get().setWidth((width != null) ? width : widget.get().getWidth());
 			widget.get().setHeight((height != null) ? height : widget.get().getHeight());
 //			widget.get().setzIndex((zIndex != null) ? zIndex : widget.get().getzIndex());
 			if(zIndex != null) {

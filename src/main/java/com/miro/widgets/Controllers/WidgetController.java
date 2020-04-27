@@ -33,14 +33,14 @@ public class WidgetController {
 	}
 	
 	@PostMapping(path="/new")
-	public @ResponseBody Widget setNewWidget(Integer xValue, Integer yValue, Double weight, Double height, Integer zIndex) {
-		Widget newWidget = widgetService.CreateNewWidget(xValue, yValue, weight, height, zIndex);
+	public @ResponseBody Widget setNewWidget(Integer xValue, Integer yValue, Double width, Double height, Integer zIndex) {
+		Widget newWidget = widgetService.CreateNewWidget(xValue, yValue, width, height, zIndex);
 		return newWidget;
 	}
 	
 	@PostMapping(path="/edit")
-	public @ResponseBody Optional<Widget> editWidget(long id, Integer xValue, Integer yValue, Double weight, Double height, Integer zIndex) {
-		Optional<Widget> widget = widgetService.EditWidget(id, xValue, yValue, weight, height, zIndex);
+	public @ResponseBody Optional<Widget> editWidget(long id, Integer xValue, Integer yValue, Double width, Double height, Integer zIndex) {
+		Optional<Widget> widget = widgetService.EditWidget(id, xValue, yValue, width, height, zIndex);
 		return widget;
 	}
 	

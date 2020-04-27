@@ -1,4 +1,4 @@
-package config;
+package com.miro.widgets.config;
 
 import java.util.concurrent.TimeUnit;
 
